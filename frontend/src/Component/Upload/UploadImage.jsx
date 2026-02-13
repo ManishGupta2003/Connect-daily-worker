@@ -10,6 +10,8 @@ const UploadPage = () => {
   // Retrieve customer phone number and location from localStorage
   const customerPhone = localStorage.getItem("userPhone");
   const customerLocation = localStorage.getItem("userLocation");
+  // ✅ Added customerMongoId from localStorage
+  const customerMongoId = localStorage.getItem("userId");
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -30,6 +32,8 @@ const UploadPage = () => {
     formData.append("CustomerPhone", customerPhone);
     formData.append("CustomerLocation", customerLocation); // Add CustomerLocation
     formData.append("image", image);
+    // ✅ Added customerMongoId to FormData
+    formData.append("customerMongoId", customerMongoId);
 
     try {
       const response = await axios.post(
@@ -39,7 +43,7 @@ const UploadPage = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       if (response.status === 201) {

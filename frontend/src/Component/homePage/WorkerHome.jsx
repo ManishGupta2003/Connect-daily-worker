@@ -1,55 +1,48 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom"; // ✅ Added useNavigate import
 import homeLogo from "../../assets/home.png";
 import chatLogo from "../../assets/chat.png";
 import historyLogo from "../../assets/history.png";
 import userLogo from "../../assets/user.png";
 
 const WorkerHome = () => {
+  const navigate = useNavigate(); // ✅ Initialized navigate
   const [problems, setProblems] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProblems = async () => {
       try {
-        // Retrieve worker's skills and location from localStorage
         const skillsString = localStorage.getItem("userSkills");
         const location = localStorage.getItem("userLocation");
 
         if (!skillsString || !location) {
-          setError("Worker skills or location not found in localStorage");
+          setError("Worker skills or location not found");
           return;
         }
 
-        // Parse skills from JSON string
         const skills = JSON.parse(skillsString);
 
-        // Make a request to fetch problems
         const response = await axios.get("http://localhost:3000/search", {
           params: {
             location: location,
-            // Consider adding skills if required by your backend
-            skills: skills.join(","), // Example format, adjust if needed
+            skills: skills.join(","),
           },
         });
 
-        // Check if the response is in the expected format
         if (Array.isArray(response.data)) {
-          // Filter problems to include only those that match worker's skills
           const filteredProblems = response.data.filter((problem) =>
-            skills.includes(problem.ProblemType)
+            skills.includes(problem.ProblemType),
           );
 
-          // Update state with the filtered problems
           setProblems(filteredProblems);
         } else {
           setError("Unexpected response format");
         }
       } catch (error) {
         console.error("Error fetching problems:", error);
-        setError(
-          "Failed to fetch problems. Please check the console for more details."
-        );
+        setError("Failed to fetch problems");
       }
     };
 
@@ -57,80 +50,93 @@ const WorkerHome = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex-grow flex justify-center mt-2">
-        <div className="SearchBar flex w-64 h-12 bg-gray-100 border border-gray-300 rounded-full">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full h-full px-4 py-2 text-gray-700 border-none rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+    <div className="min-h-screen flex flex-col app-gradient text-white">
+      {/* HEADER */}
+      <div className="px-6 pt-8">
+        <h1 className="text-3xl font-bold mb-6">Worker Dashboard 👷‍♂️</h1>
       </div>
 
-      <div className="flex flex-col items-center justify-center flex-grow">
-        {error && <p className="text-red-500">{error}</p>}
+      {/* MAIN CONTENT */}
+      <div className="flex-grow px-6">
+        {error && <p className="text-red-400 text-center">{error}</p>}
+
         {problems.length === 0 ? (
-          <p>No problems found</p>
+          <p className="text-center mt-10">
+            No problems available in your location.
+          </p>
         ) : (
-          <ul className="w-full space-y-4">
+          <div className="space-y-6">
             {problems.map((problem) => (
-              <li
+              <div
                 key={problem._id}
-                className="border border-gray-300 rounded-lg p-4"
+                className="bg-white text-gray-800 rounded-2xl shadow-xl p-5"
               >
-                <div className="flex items-center">
+                <div className="flex items-center gap-4">
                   <img
                     src={`data:${problem.contentType};base64,${problem.imageBase64}`}
                     alt={problem.filename}
-                    className="w-24 h-24 object-cover rounded-lg"
+                    className="w-24 h-24 object-cover rounded-xl shadow-md"
                   />
-                  <div className="ml-4">
+
+                  <div className="flex-1">
                     <h2 className="text-xl font-semibold">{problem.Problem}</h2>
-                    <p className="text-gray-700">{problem.ProblemType}</p>
+                    <p className="text-gray-600">Type: {problem.ProblemType}</p>
                     <p className="text-gray-600">
                       Contact: {problem.CustomerPhone}
                     </p>
+
+                    {/* ✅ Added Chat Button */}
+                    <button
+                      onClick={() =>
+                        navigate("/chat", {
+                          state: {
+                            problemId: problem._id,
+                            problemTitle: problem.Problem,
+                            receiverMongoId: problem.customerMongoId,
+                          },
+                        })
+                      }
+                      className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full sm:w-auto"
+                    >
+                      Chat with Client
+                    </button>
                   </div>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 
-      <footer className="bg-gray-800 text-white py-8 px-8 rounded-lg shadow-xl mx-[100px] sticky bottom-5">
-        <div className="flex justify-evenly items-center">
-          <div className="icon bg-blue-500 w-12 h-12 flex items-center justify-center rounded-full text-white font-bold text-2xl cursor-pointer hover:bg-blue-600 transition-colors shadow-lg">
-            <img
-              src={homeLogo}
-              alt="Home Icon"
-              className="w-full h-full object-contain rounded-full"
-            />
+      {/* FOOTER NAVIGATION */}
+      <div className="bg-white shadow-2xl rounded-t-3xl py-4 px-6">
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col items-center text-blue-600 cursor-pointer">
+            <img src={homeLogo} alt="Home" className="w-6 h-6 mb-1" />
+            <span className="text-xs font-medium">Home</span>
           </div>
-          <div className="icon w-12 h-12 flex items-center justify-center rounded-full text-white font-bold text-2xl cursor-pointer hover:bg-blue-500 transition-colors shadow-lg">
-            <img
-              src={chatLogo}
-              alt="Chat Icon"
-              className="w-full h-full object-contain rounded-full"
-            />
-          </div>
-          <div className="icon w-12 h-12 flex items-center justify-center rounded-full text-white font-bold text-2xl cursor-pointer hover:bg-red-600 transition-colors shadow-lg">
-            <img
-              src={historyLogo}
-              alt="History Icon"
-              className="w-full h-full object-contain rounded-full"
-            />
-          </div>
-          <div className="icon bg-gray-600 w-12 h-12 flex items-center justify-center rounded-full text-white font-bold text-2xl cursor-pointer hover:bg-gray-700 transition-colors shadow-lg">
-            <img
-              src={userLogo}
-              alt="User Icon"
-              className="w-full h-full object-contain rounded-full"
-            />
-          </div>
+
+          {/* ✅ Replaced static chat block with Link */}
+          <Link to="/chat-list">
+            <div className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition">
+              <img src={chatLogo} alt="Chat" className="w-6 h-6 mb-1" />
+              <span className="text-xs">Chat</span>
+            </div>
+          </Link>
+          <Link to="/history">
+            <div className="flex flex-col items-center text-gray-600 cursor-pointer">
+              <img src={historyLogo} alt="History" className="w-6 h-6 mb-1" />
+              <span className="text-xs">History</span>
+            </div>
+          </Link>
+          <Link to="/profile">
+            <div className="flex flex-col items-center text-gray-600 hover:text-blue-600 transition">
+              <img src={userLogo} alt="Profile" className="w-6 h-6 mb-1" />
+              <span className="text-xs">Profile</span>
+            </div>
+          </Link>
         </div>
-      </footer>
+      </div>
     </div>
   );
 };

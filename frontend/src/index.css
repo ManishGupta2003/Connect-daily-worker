@@ -1,27 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-.custom-gradient {
-  background: linear-gradient(
-    75deg,
-    rgb(40, 43, 54) 0%,
-    rgb(40, 43, 54) 50%,
-    rgba(40, 43, 54, 0.8) 100%
-  );
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
 }
 
-/* styles.css */
-.custom-light-gradient {
-  background: linear-gradient(
-    75deg,
-    rgb(200, 203, 214) 0%,
-    rgb(200, 203, 214) 50%,
-    rgba(200, 203, 214, 0.8) 100%
-  );
+.app-gradient {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
 }
 
-/* styles.css */
-.btn {
-  @apply bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 hover:shadow-lg transition duration-300 ease-in-out;
+.card-style {
+  @apply bg-white rounded-2xl shadow-xl p-8;
+}
+
+.input-style {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-xl 
+         focus:outline-none focus:ring-2 focus:ring-blue-500 
+         transition duration-200;
+}
+
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white 
+         font-semibold py-3 rounded-xl 
+         transition duration-300 ease-in-out;
 }

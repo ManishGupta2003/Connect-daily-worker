@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ClientRegistration = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     Name: "",
     Email: "",
@@ -13,7 +16,6 @@ const ClientRegistration = () => {
   const [errors, setErrors] = useState({});
 
   const validatePhoneNumber = (phone) => {
-    // Example validation: phone number should be 10 digits long
     const phoneRegex = /^\d{10}$/;
     return phoneRegex.test(phone);
   };
@@ -41,21 +43,26 @@ const ClientRegistration = () => {
     try {
       const response = await axios.post(
         "http://localhost:3000/customer",
-        formData
+        formData,
       );
-      console.log(response.data);
-      alert("Customer data submitted successfully");
+
+      if (response.status === 201) {
+        alert("Registration successful! Please login.");
+        navigate("/");
+      }
     } catch (error) {
       console.error("Error:", error);
+      alert("Registration failed. Try again.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-custom-gradient p-8">
+    <div className="flex items-center justify-center h-screen custom-gradient p-8">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent shadow-sm">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Register Customer
         </h1>
+
         <form onSubmit={handleCustomerSubmit}>
           <div className="mb-4">
             <input
@@ -64,9 +71,11 @@ const ClientRegistration = () => {
               value={formData.Name}
               onChange={handleChange}
               placeholder="Name"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+              className="shadow border rounded w-full py-2 px-3 text-gray-700"
             />
           </div>
+
           <div className="mb-4">
             <input
               type="email"
@@ -74,9 +83,11 @@ const ClientRegistration = () => {
               value={formData.Email}
               onChange={handleChange}
               placeholder="Email"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+              className="shadow border rounded w-full py-2 px-3 text-gray-700"
             />
           </div>
+
           <div className="mb-4">
             <input
               type="text"
@@ -84,12 +95,14 @@ const ClientRegistration = () => {
               value={formData.Phone}
               onChange={handleChange}
               placeholder="Phone"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+              className="shadow border rounded w-full py-2 px-3 text-gray-700"
             />
             {errors.Phone && (
-              <p className="text-red-500 text-xs italic">{errors.Phone}</p>
+              <p className="text-red-500 text-xs mt-1">{errors.Phone}</p>
             )}
           </div>
+
           <div className="mb-4">
             <input
               type="password"
@@ -97,9 +110,11 @@ const ClientRegistration = () => {
               value={formData.Password}
               onChange={handleChange}
               placeholder="Password"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+              className="shadow border rounded w-full py-2 px-3 text-gray-700"
             />
           </div>
+
           <div className="mb-4">
             <input
               type="text"
@@ -107,9 +122,11 @@ const ClientRegistration = () => {
               value={formData.Location}
               onChange={handleChange}
               placeholder="Location"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+              className="shadow border rounded w-full py-2 px-3 text-gray-700"
             />
           </div>
+
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full"
