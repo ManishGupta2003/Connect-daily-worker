@@ -6,7 +6,7 @@ This project helps customers post their problems and allows nearby skilled worke
 
 ---
 
-## 🎯 Project Objective
+## 🎯 Project Objective  
 
 The main goal of this project is to create a digital platform where:
 
