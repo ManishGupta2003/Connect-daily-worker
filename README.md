@@ -10,7 +10,7 @@ This project helps customers post their problems and allows nearby skilled worke
 
 The main goal of this project is to create a digital platform where:
 
-- Clients can post problems with images
+- Clients can post problems with images.
 - Workers can find jobs based on skills and location
 - Both can communicate using real-time chat
 - Clients can approve workers for a job
